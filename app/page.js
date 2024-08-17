@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import styles from './page.module.css';
+import { useState } from "react";
+import Image from "next/image";
+import styles from "./page.module.css";
 
 export default function Home() {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [scrapedData, setScrapedData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,10 +15,10 @@ export default function Home() {
     setError(null);
     setScrapedData(null);
     try {
-      const response = await fetch('/api/scrape', {
-        method: 'POST',
+      const response = await fetch("/api/scrape", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ url }),
       });
@@ -31,15 +31,16 @@ export default function Home() {
       }
       setScrapedData(data.result);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       setError(error.message);
     }
     setLoading(false);
   };
-
+  
   // Function to ensure the image URL is absolute
   const getAbsoluteUrl = (src) => {
-    if (src.startsWith('http://') || src.startsWith('https://')) {
+    if (!src) return ""; // Return an empty string or handle undefined src appropriately
+    if (src.startsWith("http://") || src.startsWith("https://")) {
       return src;
     }
     // If it's a relative URL, prepend the base URL
@@ -56,8 +57,12 @@ export default function Home() {
         placeholder="Enter URL to scrape"
         className={styles.input}
       />
-      <button onClick={handleScrape} disabled={loading} className={styles.button}>
-        {loading ? 'Scraping...' : 'Scrape'}
+      <button
+        onClick={handleScrape}
+        disabled={loading}
+        className={styles.button}
+      >
+        {loading ? "Scraping..." : "Scrape"}
       </button>
       {error && <div className={styles.error}>{error}</div>}
       {scrapedData && (
@@ -76,7 +81,13 @@ export default function Home() {
           <ul>
             {scrapedData.links.map((link, i) => (
               <li key={i}>
-                <a href={getAbsoluteUrl(link.href)} target="_blank" rel="noopener noreferrer">{link.text}</a>
+                <a
+                  href={getAbsoluteUrl(link.href)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {link.text}
+                </a>
               </li>
             ))}
           </ul>
@@ -87,7 +98,7 @@ export default function Home() {
                 <div className={styles.imageWrapper}>
                   <Image
                     src={getAbsoluteUrl(img.src)}
-                    alt={img.alt || 'Scraped image'}
+                    alt={img.alt || "Scraped image"}
                     width={100}
                     height={100}
                     className={styles.thumbnail}
